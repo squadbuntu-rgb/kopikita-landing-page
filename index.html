@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#f6f0e5">
+	<meta name="description" content="Langganan kopi premium bulanan dari KopiKita. Biji pilihan, disangrai segar, dikirim langsung ke rumah.">
+	<title>KopiKita — Kopi Premium, Ritual Terbaikmu</title>
+
+	<!-- Font judul dan teks utama -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+	<!-- AOS: animasi saat bagian halaman masuk ke viewport -->
+	<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+	<style>
+		/* Fondasi warna dan tipografi */
+		:root {
+			--espresso: #2a1e18;
+			--roast: #493328;
+			--cream: #f6f0e5;
+			--paper: #fffaf1;
+			--sand: #e8ddca;
+			--gold: #d6a64f;
+			--clay: #b95f3c;
+			--olive: #55604a;
+			--muted: #796e62;
+			--serif: "Playfair Display", Georgia, serif;
+			--sans: "Inter", Arial, sans-serif;
+			--content-width: 1160px;
+		}
+
+		*, *::before, *::after { box-sizing: border-box; }
+		html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+		body {
+			margin: 0;
+			background: var(--cream);
+			color: var(--espresso);
+			font-family: var(--sans);
+			-webkit-font-smoothing: antialiased;
+		}
+		body.menu-open { overflow: hidden; }
+		a { color: inherit; text-decoration: none; }
+		button { font: inherit; }
+		img { display: block; max-width: 100%; }
+		.container { width: min(var(--content-width), calc(100% - 48px)); margin-inline: auto; }
+
+		/* Navigasi sticky dan menu mobile */
+		.site-header {
+			position: sticky;
+			z-index: 20;
+			top: 0;
+			background: rgba(246, 240, 229, 0.96);
+			border-bottom: 1px solid rgba(42, 30, 24, 0.08);
+			transition: box-shadow 220ms ease, background 220ms ease;
+			backdrop-filter: blur(12px);
+			-webkit-backdrop-filter: blur(12px);
+		}
+		.site-header.is-scrolled { box-shadow: 0 8px 26px rgba(42, 30, 24, 0.12); }
+		.nav-wrap {
+			display: flex;
+			min-height: 76px;
+			align-items: center;
+			justify-content: space-between;
+			gap: 28px;
+		}
+		.brand {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			font-family: var(--serif);
+			font-size: 1.55rem;
+			font-weight: 700;
+			white-space: nowrap;
+		}
+		.brand-mark {
+			display: grid;
+			width: 35px;
+			height: 35px;
+			place-items: center;
+			border-radius: 50%;
+			background: var(--espresso);
+			color: var(--gold);
+		}
+		.brand-mark svg { width: 19px; height: 19px; }
+		.nav-links {
+			display: flex;
+			align-items: center;
+			gap: 34px;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.nav-links a {
+			color: var(--roast);
+			font-size: 0.88rem;
+			font-weight: 500;
+			transition: color 180ms ease;
+		}
+		.nav-links a:hover { color: var(--clay); }
+		.nav-cta { margin-left: 7px; }
+		.menu-toggle {
+			display: none;
+			width: 44px;
+			height: 44px;
+			align-items: center;
+			justify-content: center;
+			border: 1px solid rgba(42, 30, 24, 0.2);
+			border-radius: 5px;
+			background: transparent;
+			color: var(--espresso);
+			cursor: pointer;
+		}
+		.menu-toggle svg { width: 21px; height: 21px; }
+
+		/* Tombol utama */
+		.button {
+			display: inline-flex;
+			min-height: 50px;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+			padding: 0 21px;
+			border: 1px solid transparent;
+			border-radius: 4px;
+			background: var(--clay);
+			color: #fffaf1;
+			font-size: 0.87rem;
+			font-weight: 650;
+			transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+			cursor: pointer;
+		}
+		.button:hover { transform: translateY(-2px); background: #a94e31; box-shadow: 0 8px 18px rgba(93, 46, 28, 0.2); }
+		.button svg { width: 17px; height: 17px; }
+		.button-outline {
+			border-color: rgba(255, 250, 241, 0.65);
+			background: transparent;
+			color: var(--paper);
+		}
+		.button-outline:hover { background: rgba(255, 250, 241, 0.12); }
+
+		/* Hero dengan foto kopi sebagai latar utama */
+		.hero {
+			position: relative;
+			display: flex;
+			min-height: clamp(510px, calc(100svh - 190px), 700px);
+			align-items: center;
+			overflow: hidden;
+			background: #34241c url("https://images.unsplash.com/photo-1585428522589-592f41523318?auto=format&fit=crop&w=2200&q=85") center 54% / cover no-repeat;
+			color: var(--paper);
+		}
+		.hero::before {
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(90deg, rgba(28, 19, 14, 0.86) 0%, rgba(32, 22, 16, 0.68) 42%, rgba(32, 22, 16, 0.08) 100%);
+			content: "";
+		}
+		.hero-content { position: relative; z-index: 1; width: min(680px, 72%); padding-block: 74px; }
+		.eyebrow {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			margin: 0 0 22px;
+			color: #f0cc84;
+			font-size: 0.72rem;
+			font-weight: 700;
+			letter-spacing: 0.16em;
+			text-transform: uppercase;
+		}
+		.eyebrow::before { width: 28px; height: 1px; background: currentColor; content: ""; }
+		h1, h2, h3, p { margin-top: 0; }
+		h1 {
+			max-width: 700px;
+			margin-bottom: 20px;
+			font-family: var(--serif);
+			font-size: 4.6rem;
+			font-weight: 500;
+			letter-spacing: 0;
+			line-height: 1.06;
+		}
+		h1 em { color: #efc87d; font-weight: 500; }
+		.hero-copy {
+			max-width: 490px;
+			margin-bottom: 30px;
+			color: rgba(255, 250, 241, 0.84);
+			font-size: 1rem;
+			line-height: 1.8;
+		}
+		.hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; }
+		.hero-note { display: flex; align-items: center; gap: 9px; margin: 25px 0 0; color: rgba(255, 250, 241, 0.74); font-size: 0.78rem; }
+		.hero-note svg { width: 17px; height: 17px; color: #efc87d; }
+
+		/* Heading bersama untuk setiap section */
+		.section { padding: 102px 0; }
+		.section-heading { max-width: 620px; margin: 0 auto 48px; text-align: center; }
+		.section-heading .eyebrow { justify-content: center; color: var(--clay); }
+		.section-heading .eyebrow::before { background: currentColor; }
+		.section-heading h2 {
+			margin-bottom: 13px;
+			font-family: var(--serif);
+			font-size: 3rem;
+			font-weight: 600;
+			line-height: 1.16;
+		}
+		.section-heading p:last-child { margin-bottom: 0; color: var(--muted); font-size: 0.95rem; line-height: 1.75; }
+
+		/* Tiga keunggulan layanan */
+		.features { background: var(--paper); }
+		.feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+		.feature-item {
+			min-height: 235px;
+			padding: 31px 28px;
+			border: 1px solid rgba(42, 30, 24, 0.1);
+			border-radius: 6px;
+			background: #fffdf8;
+			transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+		}
+		.feature-item:hover { transform: translateY(-4px); border-color: rgba(185, 95, 60, 0.35); box-shadow: 0 14px 30px rgba(42, 30, 24, 0.08); }
+		.feature-icon {
+			display: grid;
+			width: 47px;
+			height: 47px;
+			margin-bottom: 22px;
+			place-items: center;
+			border-radius: 50%;
+			background: #f3e8d5;
+			color: var(--clay);
+		}
+		.feature-icon svg { width: 22px; height: 22px; }
+		.feature-item h3 { margin-bottom: 10px; font-family: var(--serif); font-size: 1.35rem; font-weight: 600; }
+		.feature-item p { max-width: 290px; margin-bottom: 0; color: var(--muted); font-size: 0.88rem; line-height: 1.75; }
+
+		/* Kartu langganan bulanan */
+		.pricing { background: var(--cream); }
+		.pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; max-width: 900px; margin: 0 auto; align-items: stretch; }
+		.price-card {
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			min-height: 415px;
+			padding: 36px;
+			border: 1px solid rgba(42, 30, 24, 0.16);
+			border-radius: 7px;
+			background: var(--paper);
+			transition: transform 220ms ease, box-shadow 220ms ease;
+		}
+		.price-card:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(42, 30, 24, 0.12); }
+		.price-card.premium {
+			transform: scale(1.035);
+			border-color: var(--gold);
+			background: var(--espresso);
+			color: var(--paper);
+			box-shadow: 0 16px 40px rgba(42, 30, 24, 0.16);
+		}
+		.price-card.premium:hover { transform: scale(1.035) translateY(-5px); }
+		.popular {
+			position: absolute;
+			top: -13px;
+			right: 24px;
+			padding: 7px 12px;
+			border-radius: 3px;
+			background: var(--gold);
+			color: var(--espresso);
+			font-size: 0.66rem;
+			font-weight: 750;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+		}
+		.plan-label { margin-bottom: 10px; color: var(--clay); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; }
+		.premium .plan-label { color: var(--gold); }
+		.price-card h3 { margin-bottom: 12px; font-family: var(--serif); font-size: 1.8rem; font-weight: 600; }
+		.price { display: flex; align-items: baseline; gap: 5px; margin-bottom: 8px; }
+		.price strong { font-size: 2rem; font-weight: 650; letter-spacing: 0; }
+		.price span { color: var(--muted); font-size: 0.82rem; }
+		.premium .price span { color: rgba(255, 250, 241, 0.64); }
+		.plan-description { min-height: 44px; margin-bottom: 20px; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+		.premium .plan-description { color: rgba(255, 250, 241, 0.72); }
+		.plan-features { display: grid; gap: 12px; margin: 0 0 27px; padding: 18px 0 0; border-top: 1px solid rgba(42, 30, 24, 0.12); list-style: none; }
+		.premium .plan-features { border-color: rgba(255, 250, 241, 0.18); }
+		.plan-features li { display: flex; align-items: flex-start; gap: 10px; color: var(--roast); font-size: 0.84rem; line-height: 1.5; }
+		.premium .plan-features li { color: rgba(255, 250, 241, 0.88); }
+		.plan-features svg { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 2px; color: var(--olive); }
+		.premium .plan-features svg { color: var(--gold); }
+		.price-card .button { width: 100%; margin-top: auto; }
+		.premium .button { background: var(--gold); color: var(--espresso); }
+		.premium .button:hover { background: #e5b95f; }
+
+		/* Ajakan kontak */
+		.contact-band { padding: 70px 0; background: var(--olive); color: var(--paper); }
+		.contact-inner { display: flex; align-items: center; justify-content: space-between; gap: 35px; }
+		.contact-inner h2 { max-width: 610px; margin-bottom: 9px; font-family: var(--serif); font-size: 2.45rem; font-weight: 500; line-height: 1.2; }
+		.contact-inner p { margin-bottom: 0; color: rgba(255, 250, 241, 0.76); font-size: 0.9rem; line-height: 1.7; }
+		.contact-inner .button { flex: 0 0 auto; border-color: rgba(255, 250, 241, 0.4); background: transparent; }
+		.contact-inner .button:hover { background: rgba(255, 250, 241, 0.12); }
+
+		/* Footer */
+		.site-footer { padding: 27px 0; background: var(--espresso); color: var(--paper); }
+		.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+		.footer-brand { font-family: var(--serif); font-size: 1.2rem; font-weight: 600; }
+		.copyright { margin: 0; color: rgba(255, 250, 241, 0.58); font-size: 0.75rem; }
+		.social-links { display: flex; align-items: center; gap: 10px; }
+		.social-links a {
+			display: grid;
+			width: 38px;
+			height: 38px;
+			place-items: center;
+			border: 1px solid rgba(255, 250, 241, 0.24);
+			border-radius: 50%;
+			color: var(--paper);
+			transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+		}
+		.social-links a:hover { border-color: var(--gold); background: rgba(214, 166, 79, 0.12); color: var(--gold); }
+		.social-links svg { width: 16px; height: 16px; }
+
+		@media (max-width: 900px) {
+			.nav-links { gap: 22px; }
+			h1 { font-size: 3.8rem; }
+			.hero-content { width: min(650px, 82%); }
+			.section { padding: 82px 0; }
+		}
+
+		@media (max-width: 680px) {
+			.container { width: min(var(--content-width), calc(100% - 36px)); }
+			html { scroll-padding-top: 70px; }
+			.nav-wrap { min-height: 68px; }
+			.brand { font-size: 1.4rem; }
+			.menu-toggle { display: inline-flex; }
+			.nav-links {
+				position: fixed;
+				top: 68px;
+				right: 0;
+				left: 0;
+				display: flex;
+				min-height: calc(100svh - 68px);
+				flex-direction: column;
+				align-items: stretch;
+				gap: 0;
+				padding: 20px 24px 32px;
+				background: var(--cream);
+				opacity: 0;
+				pointer-events: none;
+				transform: translateY(-8px);
+				transition: opacity 180ms ease, transform 180ms ease;
+			}
+			.nav-links.is-open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+			.nav-links li { border-bottom: 1px solid rgba(42, 30, 24, 0.12); }
+			.nav-links a:not(.button) { display: block; padding: 18px 2px; font-size: 1.05rem; }
+			.nav-links .nav-cta { margin: 22px 0 0; }
+			.hero { min-height: clamp(540px, calc(100svh - 150px), 700px); background-position: 58% center; }
+			.hero::before { background: linear-gradient(90deg, rgba(28, 19, 14, 0.86), rgba(32, 22, 16, 0.48)); }
+			.hero-content { width: 100%; padding-block: 64px; }
+			h1 { max-width: 560px; font-size: 3.2rem; }
+			.hero-copy { max-width: 430px; font-size: 0.95rem; }
+			.section { padding: 70px 0; }
+			.section-heading { margin-bottom: 35px; }
+			.section-heading h2 { font-size: 2.45rem; }
+			.feature-grid { grid-template-columns: 1fr; gap: 14px; }
+			.feature-item { min-height: 0; padding: 25px; }
+			.feature-icon { margin-bottom: 16px; }
+			.pricing-grid { grid-template-columns: 1fr; gap: 26px; }
+			.price-card { min-height: 0; padding: 30px 25px; }
+			.price-card.premium { transform: none; }
+			.price-card.premium:hover { transform: translateY(-5px); }
+			.contact-band { padding: 55px 0; }
+			.contact-inner { align-items: flex-start; flex-direction: column; gap: 22px; }
+			.contact-inner h2 { font-size: 2rem; }
+			.footer-inner { align-items: flex-start; flex-direction: column; gap: 18px; }
+			.social-links { order: 2; }
+		}
+
+		@media (max-width: 380px) {
+			.container { width: calc(100% - 30px); }
+			h1 { font-size: 2.8rem; }
+			.hero-actions { align-items: stretch; flex-direction: column; }
+			.hero-actions .button { width: 100%; }
+			.hero-note { align-items: flex-start; line-height: 1.6; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<header class="site-header" id="siteHeader">
+		<div class="container nav-wrap">
+			<a class="brand" href="#home" aria-label="KopiKita, ke halaman utama">
+				<span class="brand-mark" aria-hidden="true"><i data-lucide="coffee"></i></span>
+				<span>KopiKita</span>
+			</a>
+
+			<button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks">
+				<i data-lucide="menu" id="menuIcon"></i>
+			</button>
+
+			<nav aria-label="Navigasi utama">
+				<ul class="nav-links" id="navLinks">
+					<li><a href="#home">Home</a></li>
+					<li><a href="#menu">Menu</a></li>
+					<li><a href="#pricing">Pricing</a></li>
+					<li><a href="#contact">Contact</a></li>
+					<li><a class="button nav-cta" href="#pricing">Lihat Paket <i data-lucide="arrow-up-right" aria-hidden="true"></i></a></li>
+				</ul>
+			</nav>
+		</div>
+	</header>
+
+	<main>
+		<section class="hero" id="home" aria-labelledby="heroTitle">
+			<div class="container">
+				<div class="hero-content" data-aos="fade-up">
+					<p class="eyebrow">Langganan kopi, tanpa kompromi</p>
+					<h1 id="heroTitle">Nikmati Kopi Premium <em>Setiap Pagi</em></h1>
+					<p class="hero-copy">Biji kopi terbaik Nusantara, disangrai segar dan tiba di depan pintumu. Mulai hari dengan ritual kecil yang terasa istimewa.</p>
+					<div class="hero-actions">
+						<a class="button" href="#pricing">Berlangganan Sekarang <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+						<a class="button button-outline" href="#menu">Kenali KopiKita</a>
+					</div>
+					<p class="hero-note"><i data-lucide="package-check" aria-hidden="true"></i> Sangrai segar setiap minggu, dikirim gratis.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="section features" id="menu" aria-labelledby="featuresTitle">
+			<div class="container">
+				<div class="section-heading" data-aos="fade-up">
+					<p class="eyebrow">Lebih dari secangkir kopi</p>
+					<h2 id="featuresTitle">Kebiasaan baik, dimulai dari sini</h2>
+					<p>Kami memilih, menyangrai, dan mengirim setiap biji dengan perhatian yang sama seperti caramu menikmati kopi.</p>
+				</div>
+
+				<div class="feature-grid">
+					<article class="feature-item" data-aos="fade-up" data-aos-delay="0">
+						<span class="feature-icon" aria-hidden="true"><i data-lucide="leaf"></i></span>
+						<h3>Biji Kopi Pilihan</h3>
+						<p>Arabika pilihan dari kebun terbaik Indonesia, ditelusuri hingga ke asalnya dan dipilih saat kualitasnya sedang prima.</p>
+					</article>
+					<article class="feature-item" data-aos="fade-up" data-aos-delay="100">
+						<span class="feature-icon" aria-hidden="true"><i data-lucide="truck"></i></span>
+						<h3>Pengiriman Gratis</h3>
+						<p>Kopi disangrai segar setiap minggu dan langsung dikirim ke rumah. Ongkir? Kami yang tanggung.</p>
+					</article>
+					<article class="feature-item" data-aos="fade-up" data-aos-delay="200">
+						<span class="feature-icon" aria-hidden="true"><i data-lucide="sliders-horizontal"></i></span>
+						<h3>Bisa Kustom</h3>
+						<p>Pilih tingkat sangrai dan bentuk gilingan sesuai alat seduhmu. Preferensimu, racikanmu.</p>
+					</article>
+				</div>
+			</div>
+		</section>
+
+		<section class="section pricing" id="pricing" aria-labelledby="pricingTitle">
+			<div class="container">
+				<div class="section-heading" data-aos="fade-up">
+					<p class="eyebrow">Pilih ritualmu</p>
+					<h2 id="pricingTitle">Kopi baik, setiap bulan</h2>
+					<p>Dua paket sederhana, dengan kualitas yang selalu jadi prioritas.</p>
+				</div>
+
+				<div class="pricing-grid">
+					<article class="price-card" data-aos="fade-up">
+						<p class="plan-label">Untuk penikmat harian</p>
+						<h3>Paket Reguler</h3>
+						<p class="price"><strong>Rp149.000</strong><span>/ bulan</span></p>
+						<p class="plan-description">Bekal kopi berkualitas untuk menemani hari-harimu.</p>
+						<ul class="plan-features">
+							<li><i data-lucide="check" aria-hidden="true"></i> 250 g biji kopi pilihan</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Pilihan tingkat sangrai</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Pengiriman gratis</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Kartu cerita asal kopi</li>
+						</ul>
+						<a class="button" href="mailto:halo@kopikita.id?subject=Langganan%20Paket%20Reguler">Pilih Paket <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+					</article>
+
+					<article class="price-card premium" data-aos="fade-up" data-aos-delay="120">
+						<span class="popular">Paling favorit</span>
+						<p class="plan-label">Untuk eksplorasi rasa</p>
+						<h3>Paket Premium</h3>
+						<p class="price"><strong>Rp269.000</strong><span>/ bulan</span></p>
+						<p class="plan-description">Lebih banyak pilihan rasa untuk ritual yang lebih kaya.</p>
+						<ul class="plan-features">
+							<li><i data-lucide="check" aria-hidden="true"></i> 2 × 250 g kopi single origin</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Eksplorasi origin pilihan</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Pilihan tingkat sangrai &amp; gilingan</li>
+							<li><i data-lucide="check" aria-hidden="true"></i> Pengiriman gratis prioritas</li>
+						</ul>
+						<a class="button" href="mailto:halo@kopikita.id?subject=Langganan%20Paket%20Premium">Pilih Paket <i data-lucide="arrow-right" aria-hidden="true"></i></a>
+					</article>
+				</div>
+			</div>
+		</section>
+
+		<section class="contact-band" id="contact" aria-labelledby="contactTitle">
+			<div class="container contact-inner" data-aos="fade-up">
+				<div>
+					<h2 id="contactTitle">Punya pertanyaan soal kopi favoritmu?</h2>
+					<p>Ceritakan seleramu. Kami bantu temukan biji yang paling pas.</p>
+				</div>
+				<a class="button" href="mailto:halo@kopikita.id">Hubungi tim kami <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+			</div>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="container footer-inner">
+			<a class="footer-brand" href="#home">KopiKita</a>
+			<p class="copyright">&copy; <span id="currentYear"></span> KopiKita. Dibuat dengan sepenuh hati dan secangkir kopi.</p>
+			<div class="social-links" aria-label="Media sosial">
+				<a href="https://www.instagram.com/" aria-label="Instagram KopiKita"><i data-lucide="instagram"></i></a>
+				<a href="https://www.tiktok.com/" aria-label="TikTok KopiKita"><i data-lucide="music-2"></i></a>
+				<a href="mailto:halo@kopikita.id" aria-label="Email KopiKita"><i data-lucide="mail"></i></a>
+			</div>
+		</div>
+	</footer>
+
+	<!-- Library animasi dan ikon dimuat dari CDN -->
+	<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+	<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+	<script>
+		const header = document.getElementById('siteHeader');
+		const menuToggle = document.getElementById('menuToggle');
+		const navLinks = document.getElementById('navLinks');
+		const menuIcon = document.getElementById('menuIcon');
+
+		function setMenuOpen(isOpen) {
+			navLinks.classList.toggle('is-open', isOpen);
+			document.body.classList.toggle('menu-open', isOpen);
+			menuToggle.setAttribute('aria-expanded', String(isOpen));
+			menuToggle.setAttribute('aria-label', isOpen ? 'Tutup menu' : 'Buka menu');
+			menuIcon.setAttribute('data-lucide', isOpen ? 'x' : 'menu');
+			if (window.lucide) window.lucide.createIcons();
+		}
+
+		menuToggle.addEventListener('click', () => {
+			setMenuOpen(menuToggle.getAttribute('aria-expanded') !== 'true');
+		});
+
+		navLinks.querySelectorAll('a').forEach((link) => {
+			link.addEventListener('click', () => setMenuOpen(false));
+		});
+
+		window.addEventListener('resize', () => {
+			if (window.innerWidth > 680) setMenuOpen(false);
+		});
+
+		function updateHeaderShadow() {
+			header.classList.toggle('is-scrolled', window.scrollY > 8);
+		}
+
+		window.addEventListener('scroll', updateHeaderShadow, { passive: true });
+		updateHeaderShadow();
+		document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+		if (window.AOS) {
+			AOS.init({
+				duration: 750,
+				easing: 'ease-out-cubic',
+				once: true,
+				offset: 75,
+				disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+			});
+		}
+
+		if (window.lucide) window.lucide.createIcons();
+	</script>
+</body>
+</html>
